@@ -7,9 +7,8 @@ import numpy as np
 import cv2
 from rknn.api import RKNN
 
-ONNX_MODEL = '/home/manu/tmp/yolov5s.onnx'
-# ONNX_MODEL = 'yolov5s.onnx'
-RKNN_MODEL = 'yolov5s.rknn'
+ONNX_MODEL = '/home/manu/tmp/yolov7.onnx'
+RKNN_MODEL = 'yolov7.rknn'
 IMG_PATH = './bus.jpg'
 DATASET = './dataset.txt'
 
@@ -142,10 +141,10 @@ def nms_boxes(boxes, scores):
     return keep
 
 
-def yolov5_post_process(input_data):
+def yolov7_post_process(input_data):
     masks = [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
-    anchors = [[10, 13], [16, 30], [33, 23], [30, 61], [62, 45],
-               [59, 119], [116, 90], [156, 198], [373, 326]]
+    anchors = [[12, 16], [19, 36], [40, 28], [36, 75], [76, 55],
+               [72, 146], [142, 110], [192, 243], [459, 401]]
 
     boxes, classes, scores = [], [], []
     for input, mask in zip(input_data, masks):
@@ -246,12 +245,10 @@ if __name__ == '__main__':
 
     # Load ONNX model
     print('--> Loading model')
-    # ret = rknn.load_onnx(model=ONNX_MODEL)
-    # ret = rknn.load_onnx(model=ONNX_MODEL, outputs=['output', '327', '328'])
     ret = rknn.load_onnx(model=ONNX_MODEL,
-                         outputs=['/model.24/m.0/Conv_output_0',
-                                  '/model.24/m.1/Conv_output_0',
-                                  '/model.24/m.2/Conv_output_0'])
+                         outputs=['onnx::Reshape_489',
+                                  'onnx::Reshape_523',
+                                  'onnx::Reshape_557'])
     if ret != 0:
         print('Load model failed!')
         exit(ret)
@@ -299,9 +296,9 @@ if __name__ == '__main__':
     # Inference
     print('--> Running model')
     outputs = rknn.inference(inputs=[img])
-    np.save('./onnx_yolov5_0.npy', outputs[0])
-    np.save('./onnx_yolov5_1.npy', outputs[1])
-    np.save('./onnx_yolov5_2.npy', outputs[2])
+    np.save('./onnx_yolov7_0.npy', outputs[0])
+    np.save('./onnx_yolov7_1.npy', outputs[1])
+    np.save('./onnx_yolov7_2.npy', outputs[2])
     print('done')
 
     # post process
@@ -318,7 +315,7 @@ if __name__ == '__main__':
     input_data.append(np.transpose(input1_data, (2, 3, 0, 1)))
     input_data.append(np.transpose(input2_data, (2, 3, 0, 1)))
 
-    boxes, classes, scores = yolov5_post_process(input_data)
+    boxes, classes, scores = yolov7_post_process(input_data)
 
     img_1 = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
     if boxes is not None:
