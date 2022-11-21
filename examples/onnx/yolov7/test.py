@@ -240,7 +240,7 @@ if __name__ == '__main__':
 
     # pre-process config
     print('--> Config model')
-    rknn.config(mean_values=[[0, 0, 0]], std_values=[[255, 255, 255]])
+    rknn.config(mean_values=[[0, 0, 0]], std_values=[[255, 255, 255]], target_platform='rk3588')
     print('done')
 
     # Load ONNX model
@@ -262,13 +262,13 @@ if __name__ == '__main__':
         exit(ret)
     print('done')
 
-    # Accuracy analysis
-    print('--> Accuracy analysis')
-    ret = rknn.accuracy_analysis(inputs=[IMG_PATH], output_dir='./snapshot')
-    if ret != 0:
-        print('Accuracy analysis failed!')
-        exit(ret)
-    print('done')
+    # # Accuracy analysis
+    # print('--> Accuracy analysis')
+    # ret = rknn.accuracy_analysis(inputs=[IMG_PATH], output_dir='./snapshot')
+    # if ret != 0:
+    #     print('Accuracy analysis failed!')
+    #     exit(ret)
+    # print('done')
 
     # Export RKNN model
     print('--> Export rknn model')
