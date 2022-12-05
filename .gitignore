@@ -4,3 +4,5 @@
 *.npy
 
 *.rknn
+
+examples/onnx/yolov7/snapshot/
