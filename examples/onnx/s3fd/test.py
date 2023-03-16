@@ -9,8 +9,8 @@ from rknn.api import RKNN
 
 ONNX_MODEL = '/home/manu/tmp/s3fd.onnx'
 RKNN_MODEL = '/home/manu/nfs/tmp/install/rknn_yolov5_demo_Linux/model/RK3588/s3fd.rknn'
-IMG_PATH = '/media/manu/samsung/pics/students_lt.bmp'
-DATASET = './dataset.txt'
+IMG_PATH = '/media/manu/samsung/pics/lishi.bmp'
+DATASET = '/home/manu/tmp/dataset.txt'
 
 QUANTIZE_ON = True
 
@@ -247,10 +247,10 @@ def draw(image, boxes, scores, classes, kps):
         bottom = int(bottom)
 
         cv2.rectangle(image, (top, left), (right, bottom), (255, 0, 0), 2)
-        # cv2.putText(image, '{0} {1:.2f}'.format(CLASSES[cl], score),
-        #             (top, left - 6),
-        #             cv2.FONT_HERSHEY_SIMPLEX,
-        #             0.6, (0, 0, 255), 2)
+        cv2.putText(image, '{0} {1:.2f}'.format(CLASSES[cl], score),
+                    (top, left - 6),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.6, (0, 0, 255), 2)
         kp = kp.reshape((-1, 2))
         for k in kp:
             k = k.astype(np.int)
