@@ -54,7 +54,7 @@ def process(input):
     box_x2y2 = grid + box_rb + 0.5
     box_xy = (box_x2y2 + box_x1y1) / 2
     box_wh = box_x2y2 - box_x1y1
-    box_xy *= int(IMG_SIZE / grid_h)
+    box_xy *= int(IMG_SIZE / grid_w)
     box_wh *= int(IMG_SIZE / grid_h)
 
     box = np.concatenate((box_xy, box_wh), axis=-1)
