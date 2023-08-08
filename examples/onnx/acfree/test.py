@@ -1,30 +1,18 @@
-import os
-import urllib
-import traceback
-import time
-import sys
-import numpy as np
 import cv2
+import numpy as np
 from rknn.api import RKNN
 
 ONNX_MODEL = '/home/manu/tmp/acfree.onnx'
-RKNN_MODEL = '/home/manu/nfs/tmp/install/rknn_yolov5_demo_Linux/model/RK3588/acfree.rknn'
-IMG_PATH = './bus.jpg'
+RKNN_MODEL = '/home/manu/nfs/rk3588/install/rknn_yolov5_demo_Linux/model/RK3588/acfree.rknn'
+IMG_PATH = '/media/manu/samsung/pics/students_lt.bmp'
 DATASET = './dataset.txt'
 
 QUANTIZE_ON = True
+ACC_ANALYSIS_ON = False
 
 OBJ_THRESH = 0.4
 NMS_THRESH = 0.45
 IMG_SIZE = 640
-
-# CLASSES = ("person", "bicycle", "car", "motorbike ", "aeroplane ", "bus ", "train", "truck ", "boat", "traffic light",
-#            "fire hydrant", "stop sign ", "parking meter", "bench", "bird", "cat", "dog ", "horse ", "sheep", "cow", "elephant",
-#            "bear", "zebra ", "giraffe", "backpack", "umbrella", "handbag", "tie", "suitcase", "frisbee", "skis", "snowboard", "sports ball", "kite",
-#            "baseball bat", "baseball glove", "skateboard", "surfboard", "tennis racket", "bottle", "wine glass", "cup", "fork", "knife ",
-#            "spoon", "bowl", "banana", "apple", "sandwich", "orange", "broccoli", "carrot", "hot dog", "pizza ", "donut", "cake", "chair", "sofa",
-#            "pottedplant", "bed", "diningtable", "toilet ", "tvmonitor", "laptop	", "mouse	", "remote ", "keyboard ", "cell phone", "microwave ",
-#            "oven ", "toaster", "sink", "refrigerator ", "book", "clock", "vase", "scissors ", "teddy bear ", "hair drier", "toothbrush ")
 
 CLASSES = ("head",)
 
@@ -62,8 +50,8 @@ def process(input):
     box_x2y2 = grid + box_rb + 0.5
     box_xy = (box_x2y2 + box_x1y1) / 2
     box_wh = box_x2y2 - box_x1y1
-    box_xy *= int(IMG_SIZE/grid_w)
-    box_wh *= int(IMG_SIZE/grid_h)
+    box_xy *= int(IMG_SIZE / grid_w)
+    box_wh *= int(IMG_SIZE / grid_h)
 
     box = np.concatenate((box_xy, box_wh), axis=-1)
 
@@ -98,7 +86,7 @@ def filter_boxes(boxes, box_confidences, box_class_probs):
 
     boxes = boxes[_class_pos]
     classes = classes[_class_pos]
-    scores = (class_max_score* box_confidences)[_class_pos]
+    scores = (class_max_score * box_confidences)[_class_pos]
 
     return boxes, classes, scores
 
@@ -243,12 +231,12 @@ if __name__ == '__main__':
     # Load ONNX model
     print('--> Loading model')
     ret = rknn.load_onnx(model=ONNX_MODEL,
-                         outputs=['/detect/cls_preds.0/Conv_output_0',
-                                  '/detect/cls_preds.1/Conv_output_0',
-                                  '/detect/cls_preds.2/Conv_output_0',
-                                  '/detect/reg_preds.0/Conv_output_0',
-                                  '/detect/reg_preds.1/Conv_output_0',
-                                  '/detect/reg_preds.2/Conv_output_0'])
+                         outputs=['onnx::Sigmoid_237',
+                                  'onnx::Sigmoid_260',
+                                  'onnx::Sigmoid_283',
+                                  'onnx::Reshape_240',
+                                  'onnx::Reshape_263',
+                                  'onnx::Reshape_286'])
     if ret != 0:
         print('Load model failed!')
         exit(ret)
@@ -262,13 +250,14 @@ if __name__ == '__main__':
         exit(ret)
     print('done')
 
-    # # Accuracy analysis
-    # print('--> Accuracy analysis')
-    # ret = rknn.accuracy_analysis(inputs=[IMG_PATH], output_dir='./snapshot')
-    # if ret != 0:
-    #     print('Accuracy analysis failed!')
-    #     exit(ret)
-    # print('done')
+    if ACC_ANALYSIS_ON:
+        # Accuracy analysis
+        print('--> Accuracy analysis')
+        ret = rknn.accuracy_analysis(inputs=[IMG_PATH], output_dir='./snapshot')
+        if ret != 0:
+            print('Accuracy analysis failed!')
+            exit(ret)
+        print('done')
 
     # Export RKNN model
     print('--> Export rknn model')
@@ -299,16 +288,16 @@ if __name__ == '__main__':
     print('done')
 
     # post process
-    input0_data = outputs[0]  # 1 x 80 x 80 x 80
-    input1_data = outputs[1]  # 1 x 80 x 40 x 40
-    input2_data = outputs[2]  # 1 x 80 x 20 x 20
+    input0_data = outputs[0]  # 1 x c x 80 x 80
+    input1_data = outputs[1]  # 1 x c x 40 x 40
+    input2_data = outputs[2]  # 1 x c x 20 x 20
     input3_data = outputs[3]  # 1 x 4 x 80 x 80
     input4_data = outputs[4]  # 1 x 4 x 40 x 40
     input5_data = outputs[5]  # 1 x 4 x 20 x 20
 
-    input0_data_t = np.transpose(input0_data, (2, 3, 0, 1))  # 80 x 80 x 1 x 80
-    input1_data_t = np.transpose(input1_data, (2, 3, 0, 1))  # 40 x 40 x 1 x 80
-    input2_data_t = np.transpose(input2_data, (2, 3, 0, 1))  # 20 x 20 x 1 x 80
+    input0_data_t = np.transpose(input0_data, (2, 3, 0, 1))  # 80 x 80 x 1 x c
+    input1_data_t = np.transpose(input1_data, (2, 3, 0, 1))  # 40 x 40 x 1 x c
+    input2_data_t = np.transpose(input2_data, (2, 3, 0, 1))  # 20 x 20 x 1 x c
     input3_data_t = np.transpose(input3_data, (2, 3, 0, 1))  # 80 x 80 x 1 x 4
     input4_data_t = np.transpose(input4_data, (2, 3, 0, 1))  # 40 x 40 x 1 x 4
     input5_data_t = np.transpose(input5_data, (2, 3, 0, 1))  # 20 x 20 x 1 x 4
@@ -331,5 +320,6 @@ if __name__ == '__main__':
     cv2.imshow("post process result", img_1)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
+    cv2.imwrite('/home/manu/tmp/rknn_sim_img.bmp', img_1)
 
     rknn.release()

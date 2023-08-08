@@ -6,3 +6,5 @@
 *.rknn
 
 examples/onnx/yolov7/snapshot/
+
+examples/onnx/acfree/
