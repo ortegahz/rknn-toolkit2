@@ -16,7 +16,6 @@ ACC_ANALYSIS_DATASET = './dataset.txt'
 
 QUANTIZE_ON = False
 ACC_ANALYSIS_ON = False
-PRE_COMPILE_ON = False
 
 if __name__ == '__main__':
 
