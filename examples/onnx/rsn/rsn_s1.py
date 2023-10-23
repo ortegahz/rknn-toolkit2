@@ -12,7 +12,7 @@ DATASET = './dataset_rsn.txt'
 ACC_ANALYSIS_DIR_OUT = './snapshot'
 ACC_ANALYSIS_DATASET = './dataset_rsn.txt'
 
-QUANTIZE_ON = False
+QUANTIZE_ON = True
 ACC_ANALYSIS_ON = False
 
 IMG_PATH = '/media/manu/samsung/pics/kps.bmp'
