@@ -1,16 +1,17 @@
 import os
-import urllib
-import traceback
-import time
 import sys
-import numpy as np
+import time
+import traceback
+import urllib
+
 import cv2
+import numpy as np
 from rknn.api import RKNN
 
-ONNX_MODEL = '/home/manu/tmp/yolov5s.onnx'
-# ONNX_MODEL = 'yolov5s.onnx'
+# ONNX_MODEL = '/home/manu/tmp/yolov5s.onnx'
+ONNX_MODEL = 'yolov5s.onnx'
 RKNN_MODEL = 'yolov5s.rknn'
-IMG_PATH = './bus.jpg'
+IMG_PATH = './bus.bmp'
 DATASET = './dataset.txt'
 
 QUANTIZE_ON = True
@@ -20,12 +21,18 @@ NMS_THRESH = 0.45
 IMG_SIZE = 640
 
 CLASSES = ("person", "bicycle", "car", "motorbike ", "aeroplane ", "bus ", "train", "truck ", "boat", "traffic light",
-           "fire hydrant", "stop sign ", "parking meter", "bench", "bird", "cat", "dog ", "horse ", "sheep", "cow", "elephant",
-           "bear", "zebra ", "giraffe", "backpack", "umbrella", "handbag", "tie", "suitcase", "frisbee", "skis", "snowboard", "sports ball", "kite",
-           "baseball bat", "baseball glove", "skateboard", "surfboard", "tennis racket", "bottle", "wine glass", "cup", "fork", "knife ",
-           "spoon", "bowl", "banana", "apple", "sandwich", "orange", "broccoli", "carrot", "hot dog", "pizza ", "donut", "cake", "chair", "sofa",
-           "pottedplant", "bed", "diningtable", "toilet ", "tvmonitor", "laptop	", "mouse	", "remote ", "keyboard ", "cell phone", "microwave ",
-           "oven ", "toaster", "sink", "refrigerator ", "book", "clock", "vase", "scissors ", "teddy bear ", "hair drier", "toothbrush ")
+           "fire hydrant", "stop sign ", "parking meter", "bench", "bird", "cat", "dog ", "horse ", "sheep", "cow",
+           "elephant",
+           "bear", "zebra ", "giraffe", "backpack", "umbrella", "handbag", "tie", "suitcase", "frisbee", "skis",
+           "snowboard", "sports ball", "kite",
+           "baseball bat", "baseball glove", "skateboard", "surfboard", "tennis racket", "bottle", "wine glass", "cup",
+           "fork", "knife ",
+           "spoon", "bowl", "banana", "apple", "sandwich", "orange", "broccoli", "carrot", "hot dog", "pizza ", "donut",
+           "cake", "chair", "sofa",
+           "pottedplant", "bed", "diningtable", "toilet ", "tvmonitor", "laptop	", "mouse	", "remote ",
+           "keyboard ", "cell phone", "microwave ",
+           "oven ", "toaster", "sink", "refrigerator ", "book", "clock", "vase", "scissors ", "teddy bear ",
+           "hair drier", "toothbrush ")
 
 
 def sigmoid(x):
@@ -43,7 +50,6 @@ def xywh2xyxy(x):
 
 
 def process(input, mask, anchors):
-
     anchors = [anchors[i] for i in mask]
     grid_h, grid_w = map(int, input.shape[0:2])
 
@@ -52,7 +58,7 @@ def process(input, mask, anchors):
 
     box_class_probs = sigmoid(input[..., 5:])
 
-    box_xy = sigmoid(input[..., :2])*2 - 0.5
+    box_xy = sigmoid(input[..., :2]) * 2 - 0.5
 
     col = np.tile(np.arange(0, grid_w), grid_w).reshape(-1, grid_w)
     row = np.tile(np.arange(0, grid_h).reshape(-1, 1), grid_h)
@@ -60,9 +66,9 @@ def process(input, mask, anchors):
     row = row.reshape(grid_h, grid_w, 1, 1).repeat(3, axis=-2)
     grid = np.concatenate((col, row), axis=-1)
     box_xy += grid
-    box_xy *= int(IMG_SIZE/grid_h)
+    box_xy *= int(IMG_SIZE / grid_h)
 
-    box_wh = pow(sigmoid(input[..., 2:4])*2, 2)
+    box_wh = pow(sigmoid(input[..., 2:4]) * 2, 2)
     box_wh = box_wh * anchors
 
     box = np.concatenate((box_xy, box_wh), axis=-1)
@@ -98,7 +104,7 @@ def filter_boxes(boxes, box_confidences, box_class_probs):
 
     boxes = boxes[_class_pos]
     classes = classes[_class_pos]
-    scores = (class_max_score* box_confidences)[_class_pos]
+    scores = (class_max_score * box_confidences)[_class_pos]
 
     return boxes, classes, scores
 
@@ -247,11 +253,11 @@ if __name__ == '__main__':
     # Load ONNX model
     print('--> Loading model')
     # ret = rknn.load_onnx(model=ONNX_MODEL)
-    # ret = rknn.load_onnx(model=ONNX_MODEL, outputs=['output', '327', '328'])
-    ret = rknn.load_onnx(model=ONNX_MODEL,
-                         outputs=['/model.24/m.0/Conv_output_0',
-                                  '/model.24/m.1/Conv_output_0',
-                                  '/model.24/m.2/Conv_output_0'])
+    ret = rknn.load_onnx(model=ONNX_MODEL, outputs=['output', '327', '328'])
+    # ret = rknn.load_onnx(model=ONNX_MODEL,
+    #                      outputs=['/model.24/m.0/Conv_output_0',
+    #                               '/model.24/m.1/Conv_output_0',
+    #                               '/model.24/m.2/Conv_output_0'])
     if ret != 0:
         print('Load model failed!')
         exit(ret)
@@ -309,9 +315,9 @@ if __name__ == '__main__':
     input1_data = outputs[1]
     input2_data = outputs[2]
 
-    input0_data = input0_data.reshape([3, -1]+list(input0_data.shape[-2:]))
-    input1_data = input1_data.reshape([3, -1]+list(input1_data.shape[-2:]))
-    input2_data = input2_data.reshape([3, -1]+list(input2_data.shape[-2:]))
+    input0_data = input0_data.reshape([3, -1] + list(input0_data.shape[-2:]))
+    input1_data = input1_data.reshape([3, -1] + list(input1_data.shape[-2:]))
+    input2_data = input2_data.reshape([3, -1] + list(input2_data.shape[-2:]))
 
     input_data = list()
     input_data.append(np.transpose(input0_data, (2, 3, 0, 1)))
