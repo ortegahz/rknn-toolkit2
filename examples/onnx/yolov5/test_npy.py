@@ -9,14 +9,23 @@ if __name__ == '__main__':
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
     outputs = list()
-    outputs.append(np.load('./onnx_yolov5_0.npy'))
-    outputs.append(np.load('./onnx_yolov5_1.npy'))
-    outputs.append(np.load('./onnx_yolov5_2.npy'))
+    # outputs.append(np.loadtxt('/home/manu/tmp/rknn_output_0.txt'))
+    # outputs.append(np.loadtxt('/home/manu/tmp/rknn_output_1.txt'))
+    # outputs.append(np.loadtxt('/home/manu/tmp/rknn_output_2.txt'))
+    outputs.append(np.loadtxt('/home/manu/tmp/output.txt'))
+    outputs.append(np.loadtxt('/home/manu/tmp/327.txt'))
+    outputs.append(np.loadtxt('/home/manu/tmp/328.txt'))
 
     # post process
-    input0_data = outputs[0]
-    input1_data = outputs[1]
-    input2_data = outputs[2]
+    # input0_data = outputs[0]
+    # input1_data = outputs[1]
+    # input2_data = outputs[2]
+    # input0_data = np.transpose(outputs[0].reshape((1, 80, 80, 255)), (0, 3, 1, 2))
+    # input1_data = np.transpose(outputs[1].reshape((1, 40, 40, 255)), (0, 3, 1, 2))
+    # input2_data = np.transpose(outputs[2].reshape((1, 20, 20, 255)), (0, 3, 1, 2))
+    input0_data = outputs[0].reshape((1, 255, 80, 80))
+    input1_data = outputs[1].reshape((1, 255, 40, 40))
+    input2_data = outputs[2].reshape((1, 255, 20, 20))
 
     input0_data = input0_data.reshape([3, -1] + list(input0_data.shape[-2:]))
     input1_data = input1_data.reshape([3, -1] + list(input1_data.shape[-2:]))

@@ -8,13 +8,13 @@ import cv2
 import numpy as np
 from rknn.api import RKNN
 
-# ONNX_MODEL = '/home/manu/tmp/yolov5s.onnx'
-ONNX_MODEL = 'yolov5s.onnx'
+ONNX_MODEL = '/media/manu/data/docs/sigmastar/Tiramisu_DLS00V010-20220107/ipu/SGS_IPU_SDK_vQ_0.1.0/demos/onnx_yolov5/modified_yolov5s.onnx'
+# ONNX_MODEL = 'yolov5s.onnx'
 RKNN_MODEL = 'yolov5s.rknn'
 IMG_PATH = './bus.bmp'
 DATASET = './dataset.txt'
 
-QUANTIZE_ON = True
+QUANTIZE_ON = False
 
 OBJ_THRESH = 0.25
 NMS_THRESH = 0.45
@@ -253,6 +253,7 @@ if __name__ == '__main__':
     # Load ONNX model
     print('--> Loading model')
     # ret = rknn.load_onnx(model=ONNX_MODEL)
+    # ret = rknn.load_onnx(model=ONNX_MODEL, outputs=['124',])
     ret = rknn.load_onnx(model=ONNX_MODEL, outputs=['output', '327', '328'])
     # ret = rknn.load_onnx(model=ONNX_MODEL,
     #                      outputs=['/model.24/m.0/Conv_output_0',
@@ -305,10 +306,17 @@ if __name__ == '__main__':
     # Inference
     print('--> Running model')
     outputs = rknn.inference(inputs=[img])
-    np.save('./onnx_yolov5_0.npy', outputs[0])
-    np.save('./onnx_yolov5_1.npy', outputs[1])
-    np.save('./onnx_yolov5_2.npy', outputs[2])
+    # np.save('./onnx_yolov5_0.npy', outputs[0])
+    # np.save('./onnx_yolov5_1.npy', outputs[1])
+    # np.save('./onnx_yolov5_2.npy', outputs[2])
     print('done')
+
+    # save outputs
+    for save_i in range(len(outputs)):
+        save_output = outputs[save_i].flatten()
+        np.savetxt('/home/manu/tmp/rknn_output_%s.txt' % save_i, save_output,
+                   fmt="%f", delimiter="\n")
+    # sys.exit(0)
 
     # post process
     input0_data = outputs[0]
