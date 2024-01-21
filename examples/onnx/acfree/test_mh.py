@@ -1,10 +1,5 @@
-import os
-import urllib
-import traceback
-import time
-import sys
-import numpy as np
 import cv2
+import numpy as np
 from rknn.api import RKNN
 
 ONNX_MODEL = '/home/manu/tmp/best_ckpt.onnx'
@@ -16,18 +11,18 @@ QUANTIZE_ON = True
 
 OBJ_THRESH = 0.4
 NMS_THRESH = 0.45
-IMG_SIZE = 640
+IMG_SIZE = 320
 
 CLASSES = ('head', 'face')
 
 
-def post_process_face(outputs, img, color=(0, 0, 255)):
-    input0_data = outputs[6]  # 1 x c x 80 x 80
-    input1_data = outputs[7]  # 1 x c x 40 x 40
-    input2_data = outputs[8]  # 1 x c x 20 x 20
-    input3_data = outputs[9]  # 1 x 14 x 80 x 80
-    input4_data = outputs[10]  # 1 x 14 x 40 x 40
-    input5_data = outputs[11]  # 1 x 14 x 20 x 20
+def post_process_face(outputs, img, color=(0, 0, 255), base_idx=6):
+    input0_data = outputs[base_idx + 0]  # 1 x c x 80 x 80
+    input1_data = outputs[base_idx + 1]  # 1 x c x 40 x 40
+    input2_data = outputs[base_idx + 2]  # 1 x c x 20 x 20
+    input3_data = outputs[base_idx + 3]  # 1 x 14 x 80 x 80
+    input4_data = outputs[base_idx + 4]  # 1 x 14 x 40 x 40
+    input5_data = outputs[base_idx + 5]  # 1 x 14 x 20 x 20
 
     input0_data_t = np.transpose(input0_data, (2, 3, 0, 1))  # 80 x 80 x 1 x c
     input1_data_t = np.transpose(input1_data, (2, 3, 0, 1))  # 40 x 40 x 1 x c
