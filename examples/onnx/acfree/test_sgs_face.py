@@ -4,11 +4,9 @@ import numpy as np
 
 from test_mh import post_process_face, IMG_SIZE
 
-# ONNX_MODEL = '/media/manu/data/sdks/sigmastar/Tiramisu_DLS00V010-20220107/ipu/SGS_IPU_SDK_vQ_0.1.0/demos/onnx_yolov5/acfree_320.onnx'
-ONNX_MODEL = '/home/manu/tmp/face.onnx'
-RKNN_MODEL = '/home/manu/tmp/acfree.rknn'
-# IMG_PATH = '/media/manu/data/pics/students_lt_320.bmp'
-IMG_PATH = '/media/manu/samsung/pics/students_lt.bmp'
+ONNX_MODEL = '/media/manu/data/sdks/sigmastar/Tiramisu_DLS00V010-20220107/ipu/SGS_IPU_SDK_vQ_0.1.0/demos/onnx_yolov5/face_320.onnx'
+RKNN_MODEL = '/home/manu/tmp/face.rknn'
+IMG_PATH = '/media/manu/data/pics/students_lt_320.bmp'
 DATASET = './dataset.txt'
 
 QUANTIZE_ON = False
@@ -90,6 +88,27 @@ if __name__ == '__main__':
     print('done')
 
     img_1 = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+
+    # save outputs
+    for save_i in range(len(outputs)):
+        save_output = outputs[save_i].flatten()
+        np.savetxt('/home/manu/tmp/rknn_output_%s.txt' % save_i, save_output,
+                   fmt="%f", delimiter="\n")
+
+    # load
+    outputs = list()
+    # outputs.append(np.loadtxt('/home/manu/tmp/rknn_output_0.txt').reshape((1, 1, 40, 40)))
+    # outputs.append(np.loadtxt('/home/manu/tmp/rknn_output_1.txt').reshape((1, 1, 20, 20)))
+    # outputs.append(np.loadtxt('/home/manu/tmp/rknn_output_2.txt').reshape((1, 1, 10, 10)))
+    # outputs.append(np.loadtxt('/home/manu/tmp/rknn_output_3.txt').reshape((1, 14, 40, 40)))
+    # outputs.append(np.loadtxt('/home/manu/tmp/rknn_output_4.txt').reshape((1, 14, 20, 20)))
+    # outputs.append(np.loadtxt('/home/manu/tmp/rknn_output_5.txt').reshape((1, 14, 10, 10)))
+    outputs.append(np.loadtxt('/home/manu/tmp/onnx::Concat_249.txt').reshape((1, 1, 40, 40)))
+    outputs.append(np.loadtxt('/home/manu/tmp/onnx::Concat_257.txt').reshape((1, 1, 20, 20)))
+    outputs.append(np.loadtxt('/home/manu/tmp/cls_output.txt').reshape((1, 1, 10, 10)))
+    outputs.append(np.loadtxt('/home/manu/tmp/onnx::Concat_250.txt').reshape((1, 14, 40, 40)))
+    outputs.append(np.loadtxt('/home/manu/tmp/onnx::Concat_258.txt').reshape((1, 14, 20, 20)))
+    outputs.append(np.loadtxt('/home/manu/tmp/reg_output.txt').reshape((1, 14, 10, 10)))
 
     post_process_face(outputs, img_1, base_idx=0)
 
