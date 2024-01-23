@@ -10,3 +10,5 @@ examples/onnx/yolov7/snapshot/
 examples/onnx/acfree/
 
 *.pyc
+
+examples/pytorch/resnet18_export_onnx/resnet18\.onnx

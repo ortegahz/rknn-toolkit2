@@ -2,9 +2,9 @@ import cv2
 import numpy as np
 from rknn.api import RKNN
 
-ONNX_MODEL = '/media/manu/data/sdks/sigmastar/Tiramisu_DLS00V010-20220107/ipu/SGS_IPU_SDK_vQ_0.1.0/demos/onnx_yolov5/acfree_320.onnx'
+ONNX_MODEL = '/media/manu/data/sdks/sigmastar/Tiramisu_DLS00V010-20220107/ipu/SGS_IPU_SDK_vQ_0.1.0/demos/onnx_yolov5/acfree_160.onnx'
 RKNN_MODEL = '/home/manu/tmp/acfree.rknn'
-IMG_PATH = '/media/manu/data/pics/students_lt_320.bmp'
+IMG_PATH = '/media/manu/data/pics/students_lt_160.bmp'
 DATASET = './dataset.txt'
 
 QUANTIZE_ON = True
@@ -12,7 +12,7 @@ ACC_ANALYSIS_ON = False
 
 OBJ_THRESH = 0.4
 NMS_THRESH = 0.45
-IMG_SIZE = 320
+IMG_SIZE = 160
 
 CLASSES = ("head",)
 
@@ -280,33 +280,33 @@ if __name__ == '__main__':
     img = cv2.imread(IMG_PATH)
     # img, ratio, (dw, dh) = letterbox(img, new_shape=(IMG_SIZE, IMG_SIZE))
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    img = cv2.resize(img, (IMG_SIZE, IMG_SIZE))
+    # img = cv2.resize(img, (IMG_SIZE, IMG_SIZE))
 
     # Inference
     print('--> Running model')
     outputs = rknn.inference(inputs=[img])
     print('done')
 
-    # # save outputs
-    # for save_i in range(len(outputs)):
-    #     save_output = outputs[save_i].flatten()
-    #     np.savetxt('/home/manu/tmp/rknn_output_%s.txt' % save_i, save_output,
-    #                fmt="%f", delimiter="\n")
+    # save outputs
+    for save_i in range(len(outputs)):
+        save_output = outputs[save_i].flatten()
+        np.savetxt('/home/manu/tmp/rknn_output_%s.txt' % save_i, save_output,
+                   fmt="%f", delimiter="\n")
 
     # load
-    outputs = list()
+    # outputs, wh8, wh16, wh32 = list(), int(IMG_SIZE / 8), int(IMG_SIZE / 16), int(IMG_SIZE / 32)
     # outputs.append(np.loadtxt('/home/manu/tmp/rknn_output_0.txt').reshape((1, 1, 40, 40)))
     # outputs.append(np.loadtxt('/home/manu/tmp/rknn_output_1.txt').reshape((1, 1, 20, 20)))
     # outputs.append(np.loadtxt('/home/manu/tmp/rknn_output_2.txt').reshape((1, 1, 10, 10)))
     # outputs.append(np.loadtxt('/home/manu/tmp/rknn_output_3.txt').reshape((1, 4, 40, 40)))
     # outputs.append(np.loadtxt('/home/manu/tmp/rknn_output_4.txt').reshape((1, 4, 20, 20)))
     # outputs.append(np.loadtxt('/home/manu/tmp/rknn_output_5.txt').reshape((1, 4, 10, 10)))
-    outputs.append(np.loadtxt('/home/manu/tmp/onnx::Sigmoid_237.txt').reshape((1, 1, 40, 40)))
-    outputs.append(np.loadtxt('/home/manu/tmp/onnx::Sigmoid_260.txt').reshape((1, 1, 20, 20)))
-    outputs.append(np.loadtxt('/home/manu/tmp/onnx::Sigmoid_283.txt').reshape((1, 1, 10, 10)))
-    outputs.append(np.loadtxt('/home/manu/tmp/onnx::Reshape_240.txt').reshape((1, 4, 40, 40)))
-    outputs.append(np.loadtxt('/home/manu/tmp/onnx::Reshape_263.txt').reshape((1, 4, 20, 20)))
-    outputs.append(np.loadtxt('/home/manu/tmp/onnx::Reshape_286.txt').reshape((1, 4, 10, 10)))
+    # outputs.append(np.loadtxt('/home/manu/tmp/onnx::Sigmoid_237.txt').reshape((1, 1, wh8, wh8)))
+    # outputs.append(np.loadtxt('/home/manu/tmp/onnx::Sigmoid_260.txt').reshape((1, 1, wh16, wh16)))
+    # outputs.append(np.loadtxt('/home/manu/tmp/onnx::Sigmoid_283.txt').reshape((1, 1, wh32, wh32)))
+    # outputs.append(np.loadtxt('/home/manu/tmp/onnx::Reshape_240.txt').reshape((1, 4, wh8, wh8)))
+    # outputs.append(np.loadtxt('/home/manu/tmp/onnx::Reshape_263.txt').reshape((1, 4, wh16, wh16)))
+    # outputs.append(np.loadtxt('/home/manu/tmp/onnx::Reshape_286.txt').reshape((1, 4, wh32, wh32)))
 
     # post process
     input0_data = outputs[0]  # 1 x c x 80 x 80
