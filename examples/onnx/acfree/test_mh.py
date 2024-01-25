@@ -374,6 +374,8 @@ def draw_face(image, kpss, boxes, scores, classes, color=(255, 0, 0)):
                     cv2.FONT_HERSHEY_SIMPLEX,
                     0.6, color, 2)
 
+        print('kps: {}'.format(kps))
+
         colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0), (0, 255, 255)]
         for i in range(5):
             cv2.circle(image, (int(kps[2 * i]), int(kps[2 * i + 1])), 1, colors[i], -1)

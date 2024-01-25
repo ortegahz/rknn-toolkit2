@@ -294,19 +294,19 @@ if __name__ == '__main__':
                    fmt="%f", delimiter="\n")
 
     # load
-    # outputs, wh8, wh16, wh32 = list(), int(IMG_SIZE / 8), int(IMG_SIZE / 16), int(IMG_SIZE / 32)
+    outputs, wh8, wh16, wh32 = list(), int(IMG_SIZE / 8), int(IMG_SIZE / 16), int(IMG_SIZE / 32)
     # outputs.append(np.loadtxt('/home/manu/tmp/rknn_output_0.txt').reshape((1, 1, 40, 40)))
     # outputs.append(np.loadtxt('/home/manu/tmp/rknn_output_1.txt').reshape((1, 1, 20, 20)))
     # outputs.append(np.loadtxt('/home/manu/tmp/rknn_output_2.txt').reshape((1, 1, 10, 10)))
     # outputs.append(np.loadtxt('/home/manu/tmp/rknn_output_3.txt').reshape((1, 4, 40, 40)))
     # outputs.append(np.loadtxt('/home/manu/tmp/rknn_output_4.txt').reshape((1, 4, 20, 20)))
     # outputs.append(np.loadtxt('/home/manu/tmp/rknn_output_5.txt').reshape((1, 4, 10, 10)))
-    # outputs.append(np.loadtxt('/home/manu/tmp/onnx::Sigmoid_237.txt').reshape((1, 1, wh8, wh8)))
-    # outputs.append(np.loadtxt('/home/manu/tmp/onnx::Sigmoid_260.txt').reshape((1, 1, wh16, wh16)))
-    # outputs.append(np.loadtxt('/home/manu/tmp/onnx::Sigmoid_283.txt').reshape((1, 1, wh32, wh32)))
-    # outputs.append(np.loadtxt('/home/manu/tmp/onnx::Reshape_240.txt').reshape((1, 4, wh8, wh8)))
-    # outputs.append(np.loadtxt('/home/manu/tmp/onnx::Reshape_263.txt').reshape((1, 4, wh16, wh16)))
-    # outputs.append(np.loadtxt('/home/manu/tmp/onnx::Reshape_286.txt').reshape((1, 4, wh32, wh32)))
+    outputs.append(np.loadtxt('/home/manu/tmp/onnx::Sigmoid_237.txt').reshape((1, 1, wh8, wh8)))
+    outputs.append(np.loadtxt('/home/manu/tmp/onnx::Sigmoid_260.txt').reshape((1, 1, wh16, wh16)))
+    outputs.append(np.loadtxt('/home/manu/tmp/onnx::Sigmoid_283.txt').reshape((1, 1, wh32, wh32)))
+    outputs.append(np.loadtxt('/home/manu/tmp/onnx::Reshape_240.txt').reshape((1, 4, wh8, wh8)))
+    outputs.append(np.loadtxt('/home/manu/tmp/onnx::Reshape_263.txt').reshape((1, 4, wh16, wh16)))
+    outputs.append(np.loadtxt('/home/manu/tmp/onnx::Reshape_286.txt').reshape((1, 4, wh32, wh32)))
 
     # post process
     input0_data = outputs[0]  # 1 x c x 80 x 80
