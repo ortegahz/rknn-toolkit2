@@ -2,9 +2,9 @@ import cv2
 import numpy as np
 from rknn.api import RKNN
 
-ONNX_MODEL = '/media/manu/data/sdks/sigmastar/Tiramisu_DLS00V010-20220107/ipu/SGS_IPU_SDK_vQ_0.1.0/demos/onnx_yolov5/acfree_160.onnx'
+ONNX_MODEL = '/media/manu/data/sdks/sigmastar/Tiramisu_DLS00V010-20220107/ipu/SGS_IPU_SDK_vQ_0.1.0/demos/onnx_yolov5/acfree.onnx'
 RKNN_MODEL = '/home/manu/tmp/acfree.rknn'
-IMG_PATH = '/media/manu/data/pics/students_lt_160.bmp'
+IMG_PATH = '/media/manu/data/pics/students_lt.bmp'
 DATASET = './dataset.txt'
 
 QUANTIZE_ON = True
@@ -12,7 +12,7 @@ ACC_ANALYSIS_ON = False
 
 OBJ_THRESH = 0.4
 NMS_THRESH = 0.45
-IMG_SIZE = 160
+IMG_SIZE = 640
 
 CLASSES = ("head",)
 
@@ -295,12 +295,6 @@ if __name__ == '__main__':
 
     # load
     outputs, wh8, wh16, wh32 = list(), int(IMG_SIZE / 8), int(IMG_SIZE / 16), int(IMG_SIZE / 32)
-    # outputs.append(np.loadtxt('/home/manu/tmp/rknn_output_0.txt').reshape((1, 1, 40, 40)))
-    # outputs.append(np.loadtxt('/home/manu/tmp/rknn_output_1.txt').reshape((1, 1, 20, 20)))
-    # outputs.append(np.loadtxt('/home/manu/tmp/rknn_output_2.txt').reshape((1, 1, 10, 10)))
-    # outputs.append(np.loadtxt('/home/manu/tmp/rknn_output_3.txt').reshape((1, 4, 40, 40)))
-    # outputs.append(np.loadtxt('/home/manu/tmp/rknn_output_4.txt').reshape((1, 4, 20, 20)))
-    # outputs.append(np.loadtxt('/home/manu/tmp/rknn_output_5.txt').reshape((1, 4, 10, 10)))
     outputs.append(np.loadtxt('/home/manu/tmp/onnx::Sigmoid_237.txt').reshape((1, 1, wh8, wh8)))
     outputs.append(np.loadtxt('/home/manu/tmp/onnx::Sigmoid_260.txt').reshape((1, 1, wh16, wh16)))
     outputs.append(np.loadtxt('/home/manu/tmp/onnx::Sigmoid_283.txt').reshape((1, 1, wh32, wh32)))
